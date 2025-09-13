@@ -14,6 +14,9 @@ app.use(
   })
 );
 app.use("/", express.static("uploads"));
+app.use("/",(resp)=>{
+   resp.send("Hello world")
+})
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
