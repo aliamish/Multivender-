@@ -14,7 +14,7 @@ app.use(
   })
 );
 app.use("/", express.static("uploads"));
-app.use("/",(resp)=>{
+app.use("/",(req,resp)=>{
    resp.send("Hello world")
 })
 
