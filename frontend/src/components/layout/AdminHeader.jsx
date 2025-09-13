@@ -10,7 +10,6 @@ import { backend_url } from '../../server';
 
 
 const AdminHeader = () => {
-      const { seller } = useSelector((state) => state.seller);
       const { user } = useSelector((state) => state.user);
 
        const avatarUrl = user?.avatar?.url;
@@ -72,9 +71,7 @@ const AdminHeader = () => {
           {/* SELLER PROFILE */}
             <img
               src={fullAvatarUrl}
-              onError={(e) => {
-                e.target.src = Avatar;
-              }}
+             
               className="w-10 h-10 border-green-700 rounded-full border-3"
               alt="User Avatar"
             />

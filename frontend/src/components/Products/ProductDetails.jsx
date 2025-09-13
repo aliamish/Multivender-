@@ -18,7 +18,7 @@ import {
 import { addTocart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 import axios from "axios";
-
+import Ratings from '../../components/Products/Ratings'
 const ProductDetails = ({ data }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
@@ -141,9 +141,9 @@ const ProductDetails = ({ data }) => {
                           src={`${backend_url}${i}`}
                           alt=""
                           className="h-[200px] overflow-hidden mr-3 mt-3 "
-                          onClick={() => setSelect(index)}
+                          onClick={() => setSelect(i)}
                         />
-                      </div>;
+                      </div>
                     })}
                   <div
                     className={`${

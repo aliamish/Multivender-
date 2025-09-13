@@ -12,7 +12,7 @@ import { server } from "../../server";
 
 const AllProducts = () => {
  const [data, setData] = useState([])
-
+const dispatch = useDispatch()
   useEffect(() => {
     axios.get(`${server}/product/admin-all-products`, {withCredentials: true}).then((res) => {
       setData(res.data.products)

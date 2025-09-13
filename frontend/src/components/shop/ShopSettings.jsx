@@ -5,6 +5,7 @@ import { AiOutlineCamera } from "react-icons/ai";
 import styles from "../../styles/style";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {loadShop} from '../../redux/actions/user'
 
 const ShopSettings = () => {
   const { seller } = useSelector((state) => state.seller);
@@ -35,7 +36,7 @@ const ShopSettings = () => {
         withCredentials: true,
       })
       .then((res) => {
-        dispatch(loadSeller());
+        dispatch(loadShop());
         toast.success("Avatar update successfull!");
       })
       .catch((error) => {

@@ -14,6 +14,7 @@ const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 const DashboardMessages = () => {
   const { seller } = useSelector((state) => state.seller);
+  const { user } = useSelector((state) => state.user);
 
   const [conversations, setConversations] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);

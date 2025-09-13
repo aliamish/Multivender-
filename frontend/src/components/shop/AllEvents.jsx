@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
 import Loader from "../layout/loader";
 import {DataGrid} from "@mui/x-data-grid";
-import { getAllEventsShop } from "../../redux/actions/event";
+import { deleteEvent, getAllEventsShop } from "../../redux/actions/event";
 
 
 const AllEvents = () => {
