@@ -61,7 +61,7 @@ const ShopSettings = () => {
       )
       .then((res) => {
         toast.success("Shop info updated successfully!");
-        dispatch(loadSeller());
+        dispatch(loadShop());
       })
       .catch((error) => {
         toast.error(error.response?.data.message);
