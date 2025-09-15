@@ -90,7 +90,7 @@ const App = () => {
               <Route
                 path="/payment"
                 element={
-                  <ProtectedRout isAuthenticated={isAuthenticated}>
+                  <ProtectedRout >
                     <PaymentPage />
                   </ProtectedRout>
                 }
@@ -119,7 +119,7 @@ const App = () => {
           <Route
             path="/checkout"
             element={
-              <ProtectedRout isAuthenticated={isAuthenticated}>
+              <ProtectedRout >
                 <CheckoutPage />
               </ProtectedRout>
             }
@@ -128,7 +128,7 @@ const App = () => {
           <Route
             path="/profile"
             element={
-              <ProtectedRout isAuthenticated={isAuthenticated}>
+              <ProtectedRout >
                 <ProfilePage />
               </ProtectedRout>
             }
@@ -136,7 +136,7 @@ const App = () => {
           <Route
             path="/inbox"
             element={
-              <ProtectedRout isAuthenticated={isAuthenticated}>
+              <ProtectedRout >
                 <UserInbox />
               </ProtectedRout>
             }
@@ -144,7 +144,7 @@ const App = () => {
           <Route
             path="/user/order/:id"
             element={
-              <ProtectedRout isAuthenticated={isAuthenticated}>
+              <ProtectedRout >
                 <OrderDetailsPage />
               </ProtectedRout>
             }
