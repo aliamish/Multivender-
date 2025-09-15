@@ -5,7 +5,7 @@ const path = require("path");
 require("dotenv").config({ path: "backend/config/.env" });
 
 // Serve static uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
 
 // HANDLING UNCAUGHT EXCEPTIONS
 process.on("uncaughtException", (err) => {
