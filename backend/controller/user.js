@@ -189,6 +189,8 @@ router.get(
       resp.cookie("token", null, {
         expires: new Date(Date.now()),
         httpOnly: true,
+        sameSite: "none",
+        secure: true,
       });
       resp.status(201).json({
         success: true,
@@ -402,30 +404,30 @@ router.get(
   })
 );
 
-  // delete users
-  router.delete(
-    "/delete-user/:id",
-    isAuthenticated,
-    isAdmin("Admin"),
-    catchAsyncError(async (req, res, next) => {
-      try {
-        const user = await User.findById(req.params.id);
+// delete users
+router.delete(
+  "/delete-user/:id",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.params.id);
 
-        if (!user) {
-          return next(
-            new ErrorHandler("User is not available with this id", 400)
-          );
-        }
-
-        await User.findByIdAndDelete(req.params.id);
-
-        res.status(201).json({
-          success: true,
-          message: "User deleted successfully!",
-        });
-      } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
+      if (!user) {
+        return next(
+          new ErrorHandler("User is not available with this id", 400)
+        );
       }
-    })
-  );
+
+      await User.findByIdAndDelete(req.params.id);
+
+      res.status(201).json({
+        success: true,
+        message: "User deleted successfully!",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 module.exports = router;

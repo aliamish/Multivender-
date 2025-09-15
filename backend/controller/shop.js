@@ -178,6 +178,8 @@ router.get(
       resp.cookie("seller_token", null, {
         expires: new Date(Date.now()),
         httpOnly: true,
+        sameSite: "none",
+        secure: true,
       });
       resp.status(201).json({
         success: true,
@@ -248,8 +250,6 @@ router.put(
         return next(new ErrorHandler("User not found", 400));
       }
 
-      
-
       shop.name = name;
       shop.description = description;
       shop.address = address;
@@ -281,7 +281,7 @@ router.get(
       res.status(201).json({
         success: true,
         sellers,
-      })
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -315,11 +315,13 @@ router.delete(
   })
 );
 
-
 // update seller withdraw methods ---- sellers
-router.put("/update-payment-medthods", isSeller,catchAsyncError(async(req,res,next) => {
-  try {
-      const {withdrawMethod} = req.body;
+router.put(
+  "/update-payment-medthods",
+  isSeller,
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const { withdrawMethod } = req.body;
 
       const seller = await Shop.findByIdAndUpdate(req.seller._id, {
         withdrawMethod,
@@ -328,34 +330,36 @@ router.put("/update-payment-medthods", isSeller,catchAsyncError(async(req,res,ne
       res.status(201).json({
         success: true,
         seller,
-      })
-  } catch (error) {
-          return next(new ErrorHandler(error.message, 500));
-
-  }
-}))
-
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 
 // delete seller withdraw merthods ---- only seller
-router.delete("/delete-withdraw-method/", isSeller, catchAsyncError(async(req,res,next) => {
-  try {
-         const seller = await Shop.findById(req.seller._id)
-         
-           if(!seller){
-            return next (new ErrorHandler("Seller not found with this id", 400))
-           }
+router.delete(
+  "/delete-withdraw-method/",
+  isSeller,
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const seller = await Shop.findById(req.seller._id);
 
-           seller.withdrawMethod = null;
+      if (!seller) {
+        return next(new ErrorHandler("Seller not found with this id", 400));
+      }
 
-           await seller.save();
+      seller.withdrawMethod = null;
 
-         res.status(201).json({
-          success: true,
-          seller,
-         })
-  } catch (error) {
-              return next(new ErrorHandler(error.message, 500));
+      await seller.save();
 
-  }
-}))
+      res.status(201).json({
+        success: true,
+        seller,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 module.exports = router;
