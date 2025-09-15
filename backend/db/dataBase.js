@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.DB_URL, {
+    const conn = await mongoose.connect("mongodb+srv://aliamish123:aliamish123@cluster0.yyjvgpg.mongodb.net/", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       dbName: "ecommerce", // ✅ yahan apni DB ka naam diya
