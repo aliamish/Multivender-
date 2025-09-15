@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://multivender-8np2-nelh1u3n2-ali-amishs-projects.vercel.app/",
+    origin: "https://multivender-8np2.vercel.app",
     credentials: true,
   })
 );
