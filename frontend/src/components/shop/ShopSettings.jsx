@@ -60,7 +60,7 @@ const ShopSettings = () => {
         { withCredentials: true }
       )
       .then((res) => {
-        toast.success("Shop info updated successfully!");
+        toast.success("Sh---------------------------------------------------------------------------------------+++++++++++++++++++++++++++++++++++++++++op info updated successfully!");
         dispatch(loadShop());
       })
       .catch((error) => {
