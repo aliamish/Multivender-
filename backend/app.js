@@ -12,7 +12,7 @@ app.use(
     origin: "https://multivender-8np2.vercel.app",
     credentials: true,
   })
-);
+);  
 app.use("/", express.static("uploads"));
 app.use("/",(req,resp)=>{
    resp.send("Hello world")

@@ -69,9 +69,7 @@ const DashboardHeader = () => {
           <Link to={`/shop/${seller?._id}`}>
             <img
               src={fullAvatarUrl}
-              onError={(e) => {
-                e.target.src = Avatar;
-              }}
+              
               className="w-10 h-10 border-green-700 rounded-full border-3"
               alt="User Avatar"
             />
