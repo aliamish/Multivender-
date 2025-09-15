@@ -12,14 +12,16 @@ import {
   AiOutlineStar,
 } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import { addToWishlist, removeFromWishlist } from "../../../redux/actions/Wishlist";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../../redux/actions/Wishlist";
 import { addTocart } from "../../../redux/actions/cart.js";
 import { toast } from "react-toastify";
 
-
-const ProductCard = ({ data, isEvent}) => {
-  const {wishlist} = useSelector((state) => state.wishlist);
-  const {cart} = useSelector((state) => state.cart)
+const ProductCard = ({ data, isEvent }) => {
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const { cart } = useSelector((state) => state.cart);
 
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
@@ -29,49 +31,53 @@ const ProductCard = ({ data, isEvent}) => {
   // const productName = data?.name?.replace(/\s+/g, "-") || "unknown-product";
 
   useEffect(() => {
-    if(wishlist && wishlist.find((i) => i._id === data._id)){
-       setClick(true);
-    } else{
+    if (wishlist && wishlist.find((i) => i._id === data._id)) {
+      setClick(true);
+    } else {
       setClick(false);
     }
-  }, [wishlist])
+  }, [wishlist]);
 
   const removeFromWishlistHandler = (data) => {
     setClick(!click);
-    dispatch(removeFromWishlist(data))
-  }
+    dispatch(removeFromWishlist(data));
+  };
 
   const addToWishlistHandler = (data) => {
-        setClick(!click);
-    dispatch(addToWishlist(data))
-  }
-
+    setClick(!click);
+    dispatch(addToWishlist(data));
+  };
 
   const addToCartHandler = (id) => {
-  
-      const isItemExists = cart && cart.find((i) => i._id === id);
-      if (isItemExists) {
-        toast.error("Item already in cart!");
+    const isItemExists = cart && cart.find((i) => i._id === id);
+    if (isItemExists) {
+      toast.error("Item already in cart!");
+    } else {
+      if (data.stock < 1) {
+        toast.error("Product stock limited!");
       } else {
-        if(data.stock < 1){
-          toast.error("Product stock limited!")
-        } else{
-           const cartData = { ...data, qty: 1 };
+        const cartData = { ...data, qty: 1 };
         dispatch(addTocart(cartData));
         toast.success("Item added to a cart successfully!");
-        }
       }
-    };
-  
+    }
+  };
+
   return (
     <>
       <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
         <div className="flex justify-end"></div>
-        <Link to={`${isEvent === true ? `/product/${data._id}?isEvent=true` : `/product/${data._id}`}`}>
+        <Link
+          to={`${
+            isEvent === true
+              ? `/product/${data._id}?isEvent=true`
+              : `/product/${data._id}`
+          }`}
+        >
           <img
             src={
               data?.images?.[0]
-                ? `${backend_url}/${data.images[0]}`
+                ? `${backend_url}/uploads/${data.images[0]}`
                 : "/default-product.jpg"
             }
             alt={data?.name || "Product"}
@@ -79,15 +85,21 @@ const ProductCard = ({ data, isEvent}) => {
           />
         </Link>
         <Link to="/">
-          <h5 className={`${styles.shop_name}`}>{data.shop.name}</h5>
+<h5 className={`${styles.shop_name}`}>{data?.shop?.name || "Unknown Shop"}</h5>
         </Link>
-        <Link to={`${isEvent === true ? `/product/${data._id}?isEvent=true` : `/product/${data._id}`}`}>
+        <Link
+          to={`${
+            isEvent === true
+              ? `/product/${data._id}?isEvent=true`
+              : `/product/${data._id}`
+          }`}
+        >
           <h4 className="pb-3 font-[500]">
             {data.name.length > 40 ? data.name.slice(0, 40) + "..." : data.name}
           </h4>
 
           <div className="flex">
-            <AiFillStar 
+            <AiFillStar
               className="mr-2 cursor-pointer"
               color="#F6BA00"
               size={20}
@@ -116,10 +128,10 @@ const ProductCard = ({ data, isEvent}) => {
           <div className="py-2 flex items-center justify-between">
             <div className="flex">
               <h5 className={`${styles.productDiscountPrice}`}>
-                {data.price === 0 ? data.price : data.discount_price}$
+                {data.discountPrice ? data.discountPrice + "$" : null}
               </h5>
               <h4 className={`${styles.price}`}>
-                {data.price ? data.price + "$" : null}
+                {data.originalPrice ? data.originalPrice + "$" : null}
               </h4>
             </div>
 
@@ -138,7 +150,6 @@ const ProductCard = ({ data, isEvent}) => {
               onClick={() => removeFromWishlistHandler(data)}
               color={click ? "red" : "#333"}
               title="Remove from wishlist"
-              
             />
           ) : (
             <AiOutlineHeart
