@@ -1,16 +1,17 @@
 import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
-  isLoading: true,
-  products: [],   // 👈 add this
+  isLoading: false,
+  products: [],     // Shop specific products
+  allProducts: [],  // Global products
   product: null,
   success: false,
   error: null,
 };
 
-
 export const productReducer = createReducer(initialState, (builder) => {
   builder
+    // CREATE PRODUCT
     .addCase("productCreateRequest", (state) => {
       state.isLoading = true;
     })
@@ -24,7 +25,8 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
       state.success = false;
     })
-    // All products of a shop
+
+    // ALL PRODUCTS OF A SHOP
     .addCase("getAllProductsShopRequest", (state) => {
       state.isLoading = true;
     })
@@ -37,7 +39,7 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
 
-    // get all products golbaly 
+    // ALL PRODUCTS GLOBALLY
     .addCase("getAllProductsRequest", (state) => {
       state.isLoading = true;
     })
@@ -50,7 +52,7 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
 
-    // DELETE PRODUCT OF A SHOP
+    // DELETE PRODUCT OF A SHOP (assuming backend returns updated list)
     .addCase("deleteProductRequest", (state) => {
       state.isLoading = true;
     })
@@ -63,6 +65,7 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
 
+    // CLEAR ERRORS
     .addCase("clearErrors", (state) => {
       state.error = null;
     });
