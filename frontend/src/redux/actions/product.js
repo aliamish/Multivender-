@@ -57,14 +57,13 @@ export const getAllProducts = (id) => async(dispatch) => {
       payload: data.products,
     });
   } catch (error) {
-    dispatch({
-      type: "getAllProductsFailed",
-      payload: error.response?.data.message,
-    });
-  }
-};
+  dispatch({
+    type: "getAllProductsFailed",
+    payload: error.response?.data?.message || error.message,
+  });
+ }
 
-
+}
 
 // DELETE PRODUCT OF A SHOP
 export const deleteProduct = (id) => async (dispatch) => {

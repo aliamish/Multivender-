@@ -63,17 +63,23 @@ router.get(
   })
 );
 
-router.get("/get-all-products", async (req, resp, next) => {
+router.get("/get-all-products", async (req, res) => {
   try {
-    const products = await Product.find().sort({createdAt: -1});
-    resp.status(201).json({
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.status(200).json({
       success: true,
       products,
     });
   } catch (error) {
-    return next(new ErrorHandler(error, 400));
+    console.error("❌ Get products error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
+
+
 
 // DELETE PRODUCT OF A SHOP
 router.delete(
