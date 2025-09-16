@@ -13,7 +13,7 @@ const SignUp = () => {
   const [visible, setVisible] = useState(false);
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState(null);
- const handleFileInputChange = (e) => {
+  const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -26,31 +26,41 @@ const SignUp = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const payload = {
-      name,
-      email,
-      password,
-      avatar, // ✅ already base64
-    };
+  let avatarUrl = "";
+  if (avatarFile) { // raw file selected by user
+    const formData = new FormData();
+    formData.append("file", avatarFile);
+    formData.append("upload_preset", "ecommrence");
 
-    axios
-      .post(`${server}/user/create-user`, payload, {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((resp) => {
-        toast.success(resp.data.message);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAvatar(null);
-      })
-      .catch((err) => {
-        toast.error(err.response?.data?.message || "Something went wrong");
-      });
-  };
+    const cloudRes = await fetch(
+      "https://api.cloudinary.com/v1_1/dj7lsaidt/image/upload",
+      { method: "POST", body: formData }
+    );
+    const data = await cloudRes.json();
+    avatarUrl = data.secure_url;
+  }
+
+  const payload = { name, email, password, avatar: avatarUrl };
+
+  axios
+    .post(`${server}/user/create-user`, payload, {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then((resp) => {
+      toast.success(resp.data.message);
+      setName("");
+      setEmail("");
+      setPassword("");
+      setAvatar(null);
+    })
+    .catch((err) => {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    });
+};
+
 
   return (
     <div className=" min-h-screen bg-gray-100 flex flex-col justify-start pt-6 sm:px-6 lg:px-8">
