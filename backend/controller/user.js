@@ -51,6 +51,11 @@ router.post("/create-user", upload.single("file"), async (req, resp, next) => {
       return next(new ErrorHandler("User already exists", 400));
     }
 
+    const fileUpload = require("express-fileupload");
+
+app.use(fileUpload());
+
+
     const fileUrl = path.join("uploads", req.file.filename);
     const user = {
       name,
