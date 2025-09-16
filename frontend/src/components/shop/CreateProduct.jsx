@@ -31,29 +31,66 @@ const CreateProduct = () => {
     }
   }, [dispatch, error, success]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newForm = new FormData();
+ const handleImageChange = async (e) => {
+    const files = Array.from(e.target.files);
 
-    images.forEach((image) => {
-      newForm.append("images", image);
-    });
-    newForm.append("name", name);
-    newForm.append("description", description);
-    newForm.append("category", category);
-    newForm.append("tags", tags);
-    newForm.append("originalPrice", originalPrice);
-    newForm.append("discountPrice", discountPrice);
-    newForm.append("stock", stock);
-    newForm.append("shopId", seller?._id);
-    dispatch(createProduct(newForm));
+    for (let file of files) {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "ecommrence"); // must exist in Cloudinary
+      data.append("cloud_name", "du6xqru9r");
+
+      try {
+        const res = await axios.post(
+          "https://api.cloudinary.com/v1_1/du6xqru9r/image/upload",
+          data
+        );
+
+        if (res.data.secure_url) {
+          setImages((prev) => [...prev, res.data.secure_url]);
+        } else {
+          toast.error("Image upload failed!");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Error uploading image");
+      }
+    }
   };
 
-  const handleImageSubmit = (e) => {
+  // Submit product
+  // Frontend handleSubmit
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let files = Array.from(e.target.files);
-    setImages((prevImages) => [...prevImages, ...files]);
-  };
+
+    if (!images.length) return toast.error("Please upload at least one image!");
+
+    const productData = {
+      name,
+      description,
+      category,
+      tags,
+      originalPrice,
+      discountPrice,
+      stock,
+      shopId: seller._id,
+      images, // these are already Cloudinary URLs
+    };
+
+    await dispatch(createProduct(productData));
+  }
+
+
+    useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+    if (success) {
+      toast.success("Product created successfully!");
+      navigate("/dashboard-products");
+      window.location.reload();
+    }
+  }, [error, success, navigate]);
   return (
     <div className=" w-[90%] 800px:w-[50%] bg-white shadow h-[80vh] p-3 overflow-y-scroll">
       <h5 className="text-xl font-Poppins text-center">Create Product</h5>
