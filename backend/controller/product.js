@@ -6,20 +6,25 @@ const { upload } = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
 const Shop = require("../model/shop");
 const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
-const Order = require("../model/order")
-const mongoose = require('mongoose');
+const Order = require("../model/order");
+const mongoose = require("mongoose");
 const catchAsyncError = require("../middleware/catchAsyncError");
-
 
 // CREATE A NEW  PRODUCT
 router.post(
   "/create-product",
   catchAsyncErrors(async (req, res, next) => {
-    const { name, description, category, tags, originalPrice, discountPrice, stock, images } = req.body;
-        if (!req.seller) return next(new ErrorHandler("Seller not found", 401));
-
-        const shopId = req.seller._id; // ✅ use seller's ID directly
-
+    const {
+      shopId,
+      name,
+      description,
+      category,
+      tags,
+      originalPrice,
+      discountPrice,
+      stock,
+      images,
+    } = req.body;
 
     const shop = await Shop.findById(shopId);
     if (!shop) return next(new ErrorHandler("Shop Id is invalid!", 400));
@@ -34,16 +39,12 @@ router.post(
       stock,
       shopId,
       shop,
-images: images.map((img) => (typeof img === "string" ? img : img.url)),
+      images: images.map((img) => (typeof img === "string" ? img : img.url)),
     });
 
     res.status(201).json({ success: true, product });
   })
 );
-
-
-
-
 
 // GET ALL PRODUCTS FOR ALL PRODUCTS
 router.get(
@@ -76,8 +77,6 @@ router.get("/get-all-products", async (req, res) => {
     });
   }
 });
-
-
 
 // DELETE PRODUCT OF A SHOP
 router.delete(
@@ -124,9 +123,13 @@ router.put(
     try {
       const { user, rating, comment, productId, orderId } = req.body;
 
-const product = await Product.findById(productId).populate("reviews.user");
+      const product = await Product.findById(productId).populate(
+        "reviews.user"
+      );
       if (!product) {
-        return res.status(404).json({ success: false, message: "Product not found with this ID" });
+        return res
+          .status(404)
+          .json({ success: false, message: "Product not found with this ID" });
       }
 
       const review = {
@@ -181,7 +184,6 @@ const product = await Product.findById(productId).populate("reviews.user");
   })
 );
 
-
 // all products --- for admin
 
 router.get(
@@ -195,14 +197,11 @@ router.get(
       res.status(201).json({
         success: true,
         products,
-      })
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   })
 );
-
-
-
 
 module.exports = router;
