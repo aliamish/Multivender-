@@ -12,60 +12,53 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const sendMail = require("../utils/sendMail");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
-router.post("/create-user", async (req, resp, next) => {
+router.post("/create-user", async (req, res, next) => {
   try {
     const { name, email, password, avatar } = req.body;
 
-    const userEmail = await User.findOne({ email });
-    if (userEmail) return next(new ErrorHandler("User already exists", 400));
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return next(new ErrorHandler("User already exists", 400));
 
+    // Ensure avatar object exists
     const user = {
       name,
       email,
       password,
-      avatar: {
-        public_id: "", // optional, since uploaded directly from frontend
-        url: avatar || "",
-      },
+      avatar: avatar || { public_id: "", url: "" },
     };
 
-    // activation logic...
     const activationToken = createActivationToken(user);
     const activationUrl = `https://multivender-kzk1.vercel.app/activation/${activationToken}`;
 
     await sendMail({
       email: user.email,
       subject: "Activate your account",
-      message: `Hello ${user.name}, please click the link to activate your account: ${activationUrl}`,
+      message: `Hello ${user.name}, please click to activate: ${activationUrl}`,
     });
 
-    resp.status(201).json({
+    res.status(201).json({
       success: true,
       message: `Please check your email (${user.email}) to activate your account.`,
     });
-  } catch (error) {
-    return next(new ErrorHandler(error.message, 500));
+  } catch (err) {
+    return next(new ErrorHandler(err.message, 500));
   }
 });
 
-// CREATE ACTIVATION TOKEN
+// Create activation token
 const createActivationToken = (user) => {
   return jwt.sign(
     {
       name: user.name,
       email: user.email,
-      password: user.password, // hashed if using bcrypt
-      avatar: {
-        public_id: user.avatar.public_id,
-        url: user.avatar.url,
-      },
+      password: user.password,
+      avatar: user.avatar, // must be object {public_id, url}
     },
     process.env.ACTIVATION_SECRET,
     { expiresIn: "24h" }
   );
 };
 
-// ACTIVATE USER
 router.post(
   "/activation",
   catchAsyncError(async (req, res, next) => {
@@ -76,22 +69,24 @@ router.post(
         process.env.ACTIVATION_SECRET
       );
 
-      if (!newUser) {
-        return next(new ErrorHandler("Invalid Token", 400));
-      }
+      if (!newUser) return next(new ErrorHandler("Invalid Token", 400));
 
       const { name, email, password, avatar } = newUser;
 
       let user = await User.findOne({ email });
-      if (user) {
-        return next(new ErrorHandler("User already exists", 400));
-      }
+      if (user) return next(new ErrorHandler("User already exists", 400));
+
+      // ensure avatar object has keys
+      const avatarObj = {
+        public_id: avatar?.public_id || "",
+        url: avatar?.url || "",
+      };
 
       user = await User.create({
         name,
         email,
         password,
-        avatar,
+        avatar: avatarObj,
       });
 
       sendToken(user, 201, res);

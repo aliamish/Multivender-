@@ -26,12 +26,13 @@ const SignUp = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
 
-    let avatarUrl = "";
+    let avatarObj = { public_id: "", url: "" };
+
+    // Upload to Cloudinary if avatar selected
     if (avatar) {
-      // raw file selected by user
       const formData = new FormData();
       formData.append("file", avatar);
       formData.append("upload_preset", "ecommrence");
@@ -41,30 +42,22 @@ const SignUp = () => {
         { method: "POST", body: formData }
       );
       const data = await cloudRes.json();
-      avatarUrl = {
-        public_id: data.public_id,
-        url: data.secure_url,
-      };
+
+      avatarObj = { public_id: data.public_id, url: data.secure_url };
     }
 
-    const payload = { name, email, password, avatar: avatarUrl };
+    const payload = { name, email, password, avatar: avatarObj };
 
-    axios
-      .post(`${server}/user/create-user`, payload, {
+    try {
+      const resp = await axios.post(`${server}/user/create-user`, payload, {
         headers: { "Content-Type": "application/json" },
-      })
-      .then((resp) => {
-        toast.success(resp.data.message);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAvatar(null);
-      })
-      .catch((err) => {
-        toast.error(err.response?.data?.message || "Something went wrong");
       });
+      toast.success(resp.data.message);
+      setName(""); setEmail(""); setPassword(""); setAvatar(null);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    }
   };
-
   return (
     <div className=" min-h-screen bg-gray-100 flex flex-col justify-start pt-6 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
