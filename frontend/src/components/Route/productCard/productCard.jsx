@@ -74,7 +74,7 @@ const ProductCard = ({ data, isEvent }) => {
           }`}
         >
           <img
-            src={`${data?.images[0]}`}
+            src={`${data?.images?.[0]}`}
             alt={data?.name || "Product"}
             className="w-full h-[170px] object-contain"
           />
