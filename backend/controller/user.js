@@ -48,20 +48,20 @@ router.post("/create-user", async (req, resp, next) => {
   }
 });
 
-
 // CREATE ACTIVATION TOKEN
 const createActivationToken = (user) => {
   return jwt.sign(
     {
       name: user.name,
       email: user.email,
-      avatar: user.avatar,
-      password: user.password, // ⚠️ still here but hashed when stored
+      password: user.password, // hashed if using bcrypt
+      avatar: {
+        public_id: user.avatar.public_id,
+        url: user.avatar.url,
+      },
     },
     process.env.ACTIVATION_SECRET,
-    {
-      expiresIn: "24h",
-    }
+    { expiresIn: "24h" }
   );
 };
 
@@ -71,7 +71,10 @@ router.post(
   catchAsyncError(async (req, res, next) => {
     try {
       const { activation_token } = req.body;
-      const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+      const newUser = jwt.verify(
+        activation_token,
+        process.env.ACTIVATION_SECRET
+      );
 
       if (!newUser) {
         return next(new ErrorHandler("Invalid Token", 400));
