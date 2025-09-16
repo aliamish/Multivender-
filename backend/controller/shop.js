@@ -13,113 +13,58 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 const sendShopToken = require("../utils/shopToken");
 
 // CREATE SHOP
-router.post("/create-shop", upload.single("file"), async (req, resp, next) => {
-  try {
-    const { email } = req.body;
-    const sellerEmail = await Shop.findOne({ email });
-    if (sellerEmail) {
-      const filename = req.file?.filename;
+router.post("/create-shop", catchAsyncError(async (req, res, next) => {
+  const { name, email, password, address, zipCode, phoneNumber } = req.body;
 
-      if (filename) {
-        const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
-          req.file.filename
-        }`;
+  // Check if shop exists
+  const shopExist = await Shop.findOne({ email });
+  if (shopExist) return next(new ErrorHandler("Shop already exists", 400));
 
-        try {
-          // Try to delete the uploaded file
-          await fs.promises.unlink(filePath);
-          console.log(`✅ Deleted file: ${filename}`);
-        } catch (err) {
-          console.error(`⚠️ Failed to delete file (${filename}):`, err.message);
-          // Optional: Don't block user creation just because of file deletion failure
-        }
-      } else {
-        console.warn("⚠️ No file found to delete.");
-      }
+  // Upload avatar to Cloudinary
+  let avatarData = { public_id: "", url: "" };
+  if (req.file) {
+    const uploaded = await cloudinary.uploader.upload(req.file.path, { folder: "shops" });
+    avatarData.public_id = uploaded.public_id;
+    avatarData.url = uploaded.secure_url;
 
-      return next(new ErrorHandler("User already exists", 400));
-    }
-
-    const fileUrl = path.join("uploads", req.file.filename);
-    const seller = {
-      name: req.body.name,
-      email: email,
-      password: req.body.password,
-      avatar: {
-        url: fileUrl,
-      },
-      address: req.body.address,
-      phoneNumber: req.body.phoneNumber,
-      zipCode: req.body.zipCode,
-    };
-    const activationToken = createActivationToken(seller);
-    const activationUrl = `https://multivender-8np2.vercel.app/seller/activation/${activationToken}`;
-
-    await sendMail({
-      email: seller.email,
-      subject: "Activate your Shop",
-      message: `Hello ${seller.name}, please click the link to activate your Shop: ${activationUrl}`,
-    });
-
-    resp.status(201).json({
-      success: true,
-      message: `Please check your email (${seller.email}) to activate your Shop.`,
-    });
-  } catch (error) {
-    return next(new ErrorHandler(error.message, 400));
+    // Remove local file
+    await fs.promises.unlink(req.file.path);
   }
-});
 
-// CREATE ACTIVATION TOKEN
-const createActivationToken = (seller) => {
-  return jwt.sign(seller, process.env.ACTIVATION_SECRET, {
-    expiresIn: "2h",
+  const shop = { name, email, password, address, zipCode, phoneNumber, avatar: avatarData };
+
+  // Create activation token
+  const activationToken = jwt.sign(shop, process.env.ACTIVATION_SECRET, { expiresIn: "2h" });
+
+  const activationUrl = `${process.env.FRONTEND_URL}/seller/activation/${activationToken}`;
+
+  await sendMail({
+    email,
+    subject: "Activate your Shop",
+    message: `Hello ${name}, please click the link to activate your shop: ${activationUrl}`,
   });
-};
-// ACTIVATE OUR USER
-router.post(
-  "/activation",
-  catchAsyncError(async (req, resp, next) => {
-    const { activation_token } = req.body;
 
-    const newSeller = jwt.verify(
-      activation_token,
-      process.env.ACTIVATION_SECRET
-    );
-    // console.log("Decoded token:", newSeller);
+  res.status(201).json({
+    success: true,
+    message: `Please check your email (${email}) to activate your shop.`,
+  });
+}));
 
-    try {
-      const newSeller = jwt.verify(
-        activation_token,
-        process.env.ACTIVATION_SECRET
-      );
-      if (!newSeller) {
-        return next(new ErrorHandler("Invalid Token"));
-      }
-      const { name, email, password, avatar, zipCode, phoneNumber, address } =
-        newSeller;
-      let seller = await Shop.findOne({ email });
-      if (seller) {
-        return next(new ErrorHandler("user already exists", 400));
-      }
+// ACTIVATE SHOP
+router.post("/activation", catchAsyncError(async (req, res, next) => {
+  const { activation_token } = req.body;
 
-      seller = await Shop.create({
-        name,
-        email,
-        avatar,
-        password,
-        zipCode,
-        phoneNumber,
-        address,
-      });
-      sendShopToken(seller, 201, resp);
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-    console.log("Decoded activation token:", newUser);
-    console.log("Token received:", activation_token);
-  })
-);
+  const decodedShop = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+  if (!decodedShop) return next(new ErrorHandler("Invalid Token", 400));
+
+  const { name, email, password, avatar, zipCode, phoneNumber, address } = decodedShop;
+
+  const shopExist = await Shop.findOne({ email });
+  if (shopExist) return next(new ErrorHandler("Shop already exists", 400));
+
+  const shop = await Shop.create({ name, email, password, avatar, zipCode, phoneNumber, address });
+  sendShopToken(shop, 201, res);
+}));
 // LOGIIN OUR USER
 router.post(
   "/login-shop",

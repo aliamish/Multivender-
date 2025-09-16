@@ -19,44 +19,49 @@ const ShopCreate = () => {
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
     setAvatar(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ frontend validation
-    if (!phoneNum || isNaN(phoneNum)) {
+    if (!phoneNumber || isNaN(phoneNumber)) {
       toast.error("Please enter a valid phone number");
       return;
     }
 
-    const config = { headers: { "Content-Type": "multipart/form-data" } };
-    const newForm = new FormData();
-    newForm.append("file", avatar);
-    newForm.append("name", name);
-    newForm.append("email", email);
-    newForm.append("password", password);
-    newForm.append("zipCode", zipCode);
-    newForm.append("phoneNumber", phoneNum); // ✅ will now always send a string number
-    newForm.append("address", address);
+    try {
+      const formData = new FormData();
+      formData.append("file", avatar);
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("phoneNumber", phoneNumber);
+      formData.append("address", address);
+      formData.append("zipCode", zipCode);
 
-    axios
-      .post(`${server}/shop/create-shop`, newForm, config)
-      .then((resp) => {
-        toast.success(resp.data.message);
-        // ✅ Reset form
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAvatar(null);
-        setZipCode("");
-        setAddress("");
-        setPhoneNum(""); // ✅ reset to empty string
-      })
-      .catch((err) => {
-        toast.error(err.response?.data?.message || "Something went wrong");
-      });
+      const { data } = await axios.post(
+        `${server}/shop/create-shop`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      toast.success(data.message);
+
+      // Reset form
+      setName("");
+      setEmail("");
+      setPassword("");
+      setAvatar(null);
+      setPhoneNumber("");
+      setAddress("");
+      setZipCode("");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (
