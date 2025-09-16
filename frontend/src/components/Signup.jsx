@@ -26,41 +26,44 @@ const SignUp = () => {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  let avatarUrl = "";
-  if (avatar) { // raw file selected by user
-    const formData = new FormData();
-    formData.append("file", avatar);
-    formData.append("upload_preset", "ecommrence");
+    let avatarUrl = "";
+    if (avatar) {
+      // raw file selected by user
+      const formData = new FormData();
+      formData.append("file", avatar);
+      formData.append("upload_preset", "ecommrence");
 
-    const cloudRes = await fetch(
-      "https://api.cloudinary.com/v1_1/dj7lsaidt/image/upload",
-      { method: "POST", body: formData }
-    );
-    const data = await cloudRes.json();
-    avatarUrl = data.secure_url;
-  }
+      const cloudRes = await fetch(
+        "https://api.cloudinary.com/v1_1/dj7lsaidt/image/upload",
+        { method: "POST", body: formData }
+      );
+      const data = await cloudRes.json();
+      avatarUrl = {
+        public_id: data.public_id,
+        url: data.secure_url,
+      };
+    }
 
-  const payload = { name, email, password, avatar: avatarUrl };
+    const payload = { name, email, password, avatar: avatarUrl };
 
-  axios
-    .post(`${server}/user/create-user`, payload, {
-      headers: { "Content-Type": "application/json" },
-    })
-    .then((resp) => {
-      toast.success(resp.data.message);
-      setName("");
-      setEmail("");
-      setPassword("");
-      setAvatar(null);
-    })
-    .catch((err) => {
-      toast.error(err.response?.data?.message || "Something went wrong");
-    });
-};
-
+    axios
+      .post(`${server}/user/create-user`, payload, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((resp) => {
+        toast.success(resp.data.message);
+        setName("");
+        setEmail("");
+        setPassword("");
+        setAvatar(null);
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.message || "Something went wrong");
+      });
+  };
 
   return (
     <div className=" min-h-screen bg-gray-100 flex flex-col justify-start pt-6 sm:px-6 lg:px-8">
