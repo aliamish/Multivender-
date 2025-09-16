@@ -15,7 +15,11 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 router.post(
   "/create-product",
   catchAsyncErrors(async (req, res, next) => {
-    const { shopId, name, description, category, tags, originalPrice, discountPrice, stock, images } = req.body;
+    const { name, description, category, tags, originalPrice, discountPrice, stock, images } = req.body;
+        if (!req.seller) return next(new ErrorHandler("Seller not found", 401));
+
+        const shopId = req.seller._id; // ✅ use seller's ID directly
+
 
     const shop = await Shop.findById(shopId);
     if (!shop) return next(new ErrorHandler("Shop Id is invalid!", 400));
