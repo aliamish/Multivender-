@@ -14,7 +14,7 @@ const sendShopToken = require("../utils/shopToken");
 
 // CREATE SHOP
 router.post("/create-shop", catchAsyncError(async (req, res, next) => {
-  const { name, email, password, address, zipCode, phoneNumber } = req.body;
+  const { name, email, password, address, zipCode, phoneNum } = req.body;
 
   // Check if shop exists
   const shopExist = await Shop.findOne({ email });
@@ -31,7 +31,7 @@ router.post("/create-shop", catchAsyncError(async (req, res, next) => {
     await fs.promises.unlink(req.file.path);
   }
 
-  const shop = { name, email, password, address, zipCode, phoneNumber, avatar: avatarData };
+  const shop = { name, email, password, address, zipCode, phoneNum, avatar: avatarData };
 
   // Create activation token
   const activationToken = jwt.sign(shop, process.env.ACTIVATION_SECRET, { expiresIn: "2h" });

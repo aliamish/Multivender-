@@ -33,13 +33,14 @@ const ShopCreate = () => {
 
     try {
       const formData = new FormData();
-      formData.append("file", avatar);
       formData.append("name", name);
       formData.append("email", email);
       formData.append("password", password);
       formData.append("phoneNumber", phoneNum);
       formData.append("address", address);
       formData.append("zipCode", zipCode);
+      formData.append("file", avatar);
+
 
       const { data } = await axios.post(
         `${server}/shop/create-shop`,
