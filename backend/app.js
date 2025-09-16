@@ -15,10 +15,7 @@ app.use(
   })
 );
 app.use(fileUpload());
-app.use("/", express.static(path.join(__dirname, "./uploads")));
-app.use("/",(req,resp)=>{
-   resp.send("Hello world")
-})
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
