@@ -6,30 +6,16 @@ const cors = require("cors");
 
 const app = express();
 
-// ✅ CORS Middleware
-const allowedOrigins = [
-  "https://multivender-8np2.vercel.app", // frontend
-  "https://multivender-iota.vercel.app"  // backend domain (for testing/debugging)
-];
-
+app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "https://multivender-8np2.vercel.app", // ✅ frontend domain
     credentials: true,
   })
 );
 
-// ✅ Handle Preflight
-app.options("*", cors());
-
-app.use(express.json());
-app.use(cookieParser());
+// Multer/fileUpload ko middleware routes ke andar handle karna (global nahi)
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // CONFIG
