@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "../../../styles/style";
 import ProductDetailCard from "../ProductDetailCard/ProductDetailCard.jsx";
-import { backend_url, server } from "../../../server.js";
 import {
   AiFillHeart,
   AiFillStar,
@@ -75,17 +74,15 @@ const ProductCard = ({ data, isEvent }) => {
           }`}
         >
           <img
-            src={
-              data?.images?.[0]
-                ? `${backend_url}/uploads/${data.images[0]}`
-                : "/default-product.jpg"
-            }
+            src={`${data.images[0].url}`}
             alt={data?.name || "Product"}
             className="w-full h-[170px] object-contain"
           />
         </Link>
         <Link to="/">
-<h5 className={`${styles.shop_name}`}>{data?.shop?.name || "Unknown Shop"}</h5>
+          <h5 className={`${styles.shop_name}`}>
+            {data?.shop?.name || "Unknown Shop"}
+          </h5>
         </Link>
         <Link
           to={`${
