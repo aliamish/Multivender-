@@ -3,7 +3,7 @@ const connectDB = require("./db/dataBase");
 const cloudinary = require("cloudinary");
 require("dotenv").config({ path: "backend/config/.env" });
 
-// 🔹 Connect to Database
+// 🔹 Connect DB
 connectDB();
 
 // 🔹 Cloudinary Config
@@ -13,29 +13,18 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// 🔹 Root route for deployment check
+// 🔹 Root Route (deployment check)
 app.get("/", (req, res) => {
   res.status(200).send("✅ Deployment Successful!");
 });
 
-// 🔹 Export app (for Vercel)
+// 🔹 Export app for Vercel
 module.exports = app;
 
-// 🔹 Local development (only run when not in serverless)
+// 🔹 Local Dev Only
 if (process.env.NODE_ENV !== "PRODUCTION") {
   const PORT = process.env.PORT || 8000;
   app.listen(PORT, () => {
-    console.log(`🚀 Server is running on http://localhost:${PORT}`);
-  });
-
-  // Error Handling
-  process.on("uncaughtException", (err) => {
-    console.error(`❌ Uncaught Exception: ${err.message}`);
-    process.exit(1);
-  });
-
-  process.on("unhandledRejection", (err) => {
-    console.error(`❌ Unhandled Rejection: ${err.message}`);
-    process.exit(1);
+    console.log(`🚀 Server is running at http://localhost:${PORT}`);
   });
 }
