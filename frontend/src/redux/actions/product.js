@@ -2,7 +2,7 @@ import axios from "axios";
 import { server } from "../../server";
 
 // CREATE PRODUCT
-export const createProduct = (newForm) => async (dispatch) => {
+export const createProduct = (newForm, productData) => async (dispatch) => {
   try {
     dispatch({
       type: "productCreateRequest",
@@ -11,6 +11,7 @@ export const createProduct = (newForm) => async (dispatch) => {
     const { data } = await axios.post(
       `${server}/product/create-product`,
       newForm,
+      productData,
       config
     );
     dispatch({
@@ -26,13 +27,15 @@ export const createProduct = (newForm) => async (dispatch) => {
 };
 
 // get All Products
-export const getAllProductsShop = (id) => async(dispatch) => {
-  try{
+export const getAllProductsShop = (id) => async (dispatch) => {
+  try {
     dispatch({
       type: "getAllProductsShopRequest",
     });
 
-    const {data} = await axios.get(`${server}/product/get-all-products-shop/${id}`);
+    const { data } = await axios.get(
+      `${server}/product/get-all-products-shop/${id}`
+    );
     dispatch({
       type: "getAllProductsShopSuccess",
       payload: data.products,
@@ -45,44 +48,46 @@ export const getAllProductsShop = (id) => async(dispatch) => {
   }
 };
 
-export const getAllProducts = (id) => async(dispatch) => {
-  try{
+export const getAllProducts = (id) => async (dispatch) => {
+  try {
     dispatch({
       type: "getAllProductsRequest",
     });
 
-    const {data} = await axios.get(`${server}/product/get-all-products`);
+    const { data } = await axios.get(`${server}/product/get-all-products`);
     dispatch({
       type: "getAllProductsSuccess",
       payload: data.products,
     });
   } catch (error) {
-  dispatch({
-    type: "getAllProductsFailed",
-    payload: error.response?.data?.message || error.message,
-  });
- }
-
-}
+    dispatch({
+      type: "getAllProductsFailed",
+      payload: error.response?.data?.message || error.message,
+    });
+  }
+};
 
 // DELETE PRODUCT OF A SHOP
 export const deleteProduct = (id) => async (dispatch) => {
-  try{
-      dispatch({
-        type: "deleteProductRequest",
-      })
+  try {
+    dispatch({
+      type: "deleteProductRequest",
+    });
 
-      const {data} = await axios.delete(`${server}/product/delete-shop-product/${id}`,{
+    const { data } = await axios.delete(
+      `${server}/product/delete-shop-product/${id}`,
+      {
         withCredentials: true,
-      });
-      dispatch({
-        type: "deleteProductSuccess",
-        payload: data.message,
-      })
+      }
+    );
+    dispatch({
+      type: "deleteProductSuccess",
+      payload: data.message,
+    });
   } catch (error) {
- dispatch({
+    dispatch({
       type: "deleteProductFailed",
       payload: error.response.data.message,
     });
   }
-}
+};
