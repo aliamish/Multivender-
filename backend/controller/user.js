@@ -14,64 +14,49 @@ const sendMail = require("../utils/sendMail");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
 
-// Create User Route
-router.post("/create-user", upload.single("file"), async (req, res, next) => {
+
+// CREATE A USER
+router.post("/create-user", async (req, resp, next) => {
   try {
-    console.log("REQ.BODY:", req.body);
-    console.log("REQ.FILE:", req.file);
+    const { name, email, password, avatar } = req.body;
+    // 🔹 avatar must be a BASE64 string or image URL
 
-    const { name, email, password } = req.body;
+    // 🔎 Check if user already
     const userEmail = await User.findOne({ email });
-
     if (userEmail) {
-      // Agar user already hai, aur file upload hui hai → delete kar do
-      if (req.file?.path) {
-        try {
-          await fs.promises.unlink(req.file.path);
-          console.log(`✅ Deleted temp file: ${req.file.filename}`);
-        } catch (err) {
-          console.warn("⚠️ Could not delete temp file:", err.message);
-        }
-      }
       return next(new ErrorHandler("User already exists", 400));
     }
-
-    // Upload to cloudinary
-    const myCloud = await cloudinary.uploader.upload(req.file.path, {
-      folder: "avatars",
-    });
-
-    // Delete temp file from /tmp
-    try {
-      await fs.promises.unlink(req.file.path);
-      console.log(`✅ Deleted temp file: ${req.file.filename}`);
-    } catch (err) {
-      console.warn("⚠️ Could not delete temp file:", err.message);
+    let myCloud;
+    if (avatar) {
+      // ✅ Upload base64 image directly to Cloudinary
+      myCloud = await cloudinary.v2.uploader.upload(avatar, {
+        folder: "avatars",
+      });
     }
 
-    // Create new user object
+    // ✅ Build user object
     const user = {
       name,
       email,
       password,
       avatar: {
-        public_id: myCloud.public_id,
-        url: myCloud.secure_url,
+        public_id: myCloud?.public_id || "",
+        url: myCloud?.secure_url || "",
       },
     };
 
-    // Generate activation token
+    // ✅ Generate activation token
     const activationToken = createActivationToken(user);
-    const activationUrl = `https://multivender-8np2.vercel.app/activation/${activationToken}`;
+    const activationUrl = `https://multivender-kzk1.vercel.app/activation/${activationToken}`;
 
-    // Send activation mail
+    // ✅ Send activation email
     await sendMail({
       email: user.email,
       subject: "Activate your account",
       message: `Hello ${user.name}, please click the link to activate your account: ${activationUrl}`,
     });
 
-    res.status(201).json({
+    resp.status(201).json({
       success: true,
       message: `Please check your email (${user.email}) to activate your account.`,
     });

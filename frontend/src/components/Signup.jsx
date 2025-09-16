@@ -13,31 +13,42 @@ const SignUp = () => {
   const [visible, setVisible] = useState(false);
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState(null);
-
-  const handleFileInputChange = (e) => {
+ const handleFileInputChange = (e) => {
     const file = e.target.files[0];
-    setAvatar(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.readyState === 2) {
+          setAvatar(reader.result); // ✅ base64 saved in state
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const config = { headers: { "Content-Type": "multipart/form-data" } };
-    const newForm = new FormData();
-    newForm.append("file", avatar);
-    newForm.append("name", name);
-    newForm.append("email", email);
-    newForm.append("password", password);
+
+    const payload = {
+      name,
+      email,
+      password,
+      avatar, // ✅ already base64
+    };
 
     axios
-      .post(`${server}/user/create-user`, newForm, config)
+      .post(`${server}/user/create-user`, payload, {
+        headers: { "Content-Type": "application/json" },
+      })
       .then((resp) => {
         toast.success(resp.data.message);
         setName("");
         setEmail("");
         setPassword("");
-        setAvatar();
+        setAvatar(null);
       })
       .catch((err) => {
-        toast.error(err.response.data.message);
+        toast.error(err.response?.data?.message || "Something went wrong");
       });
   };
 
