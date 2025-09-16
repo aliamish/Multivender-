@@ -30,7 +30,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   let avatarUrl = "";
-  if (avatarFile) { // raw file selected by user
+  if (avatar) { // raw file selected by user
     const formData = new FormData();
     formData.append("file", avatar);
     formData.append("upload_preset", "ecommrence");
