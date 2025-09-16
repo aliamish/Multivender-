@@ -17,9 +17,8 @@ const ShopCreate = () => {
   const [address, setAddress] = useState("");
   const [zipCode, setZipCode] = useState("");
 
-  const handleFileInputChange = (e) => {
+ const handleFileInputChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
     setAvatar(file);
   };
 
@@ -31,38 +30,39 @@ const ShopCreate = () => {
       return;
     }
 
-    try {
+    let avatarUrl = "";
+    if (avatar) {
       const formData = new FormData();
-      formData.append("name", name);
-      formData.append("email", email);
-      formData.append("password", password);
-      formData.append("phoneNumber", phoneNum);
-      formData.append("address", address);
-      formData.append("zipCode", zipCode);
       formData.append("file", avatar);
+      formData.append("upload_preset", "ecommrence");
 
-
-      const { data } = await axios.post(
-        `${server}/shop/create-shop`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+      const cloudRes = await fetch(
+        "https://api.cloudinary.com/v1_1/dj7lsaidt/image/upload",
+        { method: "POST", body: formData }
       );
-
-      toast.success(data.message);
-
-      // Reset form
-      setName("");
-      setEmail("");
-      setPassword("");
-      setAvatar(null);
-      setPhoneNum("");
-      setAddress("");
-      setZipCode("");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Something went wrong");
+      const data = await cloudRes.json();
+      avatarUrl = data.secure_url; // ✅ only send the URL to backend
     }
+
+    const payload = {
+      name,
+      email,
+      password,
+      avatar: { url: avatarUrl },
+      phoneNumber: phoneNum,
+      address,
+      zipCode,
+    };
+
+    axios.post(`${server}/shop/create-shop`, payload)
+      .then((resp) => {
+        toast.success(resp.data.message);
+        setName(""); setEmail(""); setPassword(""); setAvatar(null);
+        setPhoneNum(""); setAddress(""); setZipCode("");
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.message || "Something went wrong");
+      });
   };
 
   return (

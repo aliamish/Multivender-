@@ -14,42 +14,53 @@ const sendShopToken = require("../utils/shopToken");
 
 // CREATE SHOP
 router.post("/create-shop", catchAsyncError(async (req, res, next) => {
-  const { name, email, password, address, zipCode, phoneNum } = req.body;
+  const { name, email, password, avatar, phoneNumber, address, zipCode } = req.body;
 
-  // Check if shop exists
-  const shopExist = await Shop.findOne({ email });
-  if (shopExist) return next(new ErrorHandler("Shop already exists", 400));
-
-  // Upload avatar to Cloudinary
-  let avatarData = { public_id: "", url: "" };
-  if (req.file) {
-    const uploaded = await cloudinary.uploader.upload(req.file.path, { folder: "shops" });
-    avatarData.public_id = uploaded.public_id;
-    avatarData.url = uploaded.secure_url;
-
-    // Remove local file
-    await fs.promises.unlink(req.file.path);
+  if (!name || !email || !password || !avatar) {
+    return next(new ErrorHandler("All fields are required", 400));
   }
 
-  const shop = { name, email, password, address, zipCode, phoneNum, avatar: avatarData };
+  let seller = await Shop.findOne({ email });
+  if (seller) {
+    return next(new ErrorHandler("Shop already exists", 400));
+  }
 
-  // Create activation token
-  const activationToken = jwt.sign(shop, process.env.ACTIVATION_SECRET, { expiresIn: "2h" });
-
-  const activationUrl = `${process.env.FRONTEND_URL}/seller/activation/${activationToken}`;
+  const newSeller = { name, email, password, avatar, phoneNumber, address, zipCode };
+  const activationToken = createActivationToken(newSeller);
+  const activationUrl = `https://multivender-8np2.vercel.app/seller/activation/${activationToken}`;
 
   await sendMail({
-    email,
+    email: newSeller.email,
     subject: "Activate your Shop",
-    message: `Hello ${name}, please click the link to activate your shop: ${activationUrl}`,
+    message: `Hello ${newSeller.name}, please click the link to activate your Shop: ${activationUrl}`,
   });
 
   res.status(201).json({
     success: true,
-    message: `Please check your email (${email}) to activate your shop.`,
+    message: `Please check your email (${newSeller.email}) to activate your Shop.`,
   });
 }));
 
+// CREATE ACTIVATION TOKEN
+const createActivationToken = (seller) => {
+  return jwt.sign(seller, process.env.ACTIVATION_SECRET, { expiresIn: "2h" });
+};
+
+// ACTIVATE SHOP
+router.post("/activation", catchAsyncError(async (req, res, next) => {
+  const { activation_token } = req.body;
+  const decodedSeller = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+
+  const { name, email, password, avatar, phoneNumber, address, zipCode } = decodedSeller;
+
+  let seller = await Shop.findOne({ email });
+  if (seller) {
+    return next(new ErrorHandler("Shop already exists", 400));
+  }
+
+  seller = await Shop.create({ name, email, password, avatar, phoneNumber, address, zipCode });
+  sendShopToken(seller, 201, res);
+}));
 // ACTIVATE SHOP
 router.post("/activation", catchAsyncError(async (req, res, next) => {
   const { activation_token } = req.body;
