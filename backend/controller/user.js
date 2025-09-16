@@ -5,7 +5,7 @@ const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const sendToken = require("../utils/jwtToken");
-
+const cloudinary = require("cloudinary");
 const router = express.Router();
 
 const User = require("../model/user");
@@ -26,6 +26,10 @@ router.post("/create-user", upload.single("file"), async (req, resp, next) => {
 
     if (userEmail) {
       const filename = req.file?.filename;
+
+      const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+        folder: "avatars",
+      });
 
       if (filename) {
         const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
@@ -53,7 +57,8 @@ router.post("/create-user", upload.single("file"), async (req, resp, next) => {
       email,
       password,
       avatar: {
-        url: fileUrl,
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
       },
     };
 

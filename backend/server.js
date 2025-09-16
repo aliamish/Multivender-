@@ -14,6 +14,15 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
+// connect db
+connectDatabase();
+coludinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+})
+
+
 // CONNECT DB
 connectDB();
 
