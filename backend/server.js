@@ -2,6 +2,19 @@ const app = require("./app");
 const connectDB = require("./db/dataBase");
 const cloudinary = require("cloudinary");
 require("dotenv").config({ path: "backend/config/.env" });
+const cors = require("cors");
+
+app.use(cors({
+  origin: ["https://multivender-8np2.vercel.app"], // your frontend domain
+  credentials: true,
+}));
+
+// Debug CORS
+app.use((req, res, next) => {
+  console.log("🌍 Request received:", req.method, req.originalUrl);
+  console.log("Headers:", req.headers.origin);
+  next();
+});
 
 // 🔹 Connect DB
 connectDB();

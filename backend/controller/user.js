@@ -14,21 +14,28 @@ const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
 // CREATE USER
 router.post("/create-user", async (req, res, next) => {
+  console.log("📩 Incoming /create-user request");
+  console.log("Request Body:", req.body);
+
   try {
     const { name, email, password, avatar } = req.body;
 
     // 🔎 Check if user already exists
     const userEmail = await User.findOne({ email });
+    console.log("User lookup result:", userEmail);
+
     if (userEmail) {
+      console.log("❌ User already exists:", email);
       return next(new ErrorHandler("User already exists", 400));
     }
 
     let myCloud;
     if (avatar) {
-      // ✅ Upload base64 or URL image directly to Cloudinary
+      console.log("📤 Uploading avatar to Cloudinary...");
       myCloud = await cloudinary.v2.uploader.upload(avatar, {
         folder: "avatars",
       });
+      console.log("✅ Cloudinary upload result:", myCloud);
     }
 
     // ✅ Build user object
@@ -42,18 +49,21 @@ router.post("/create-user", async (req, res, next) => {
       },
     };
 
-    // ✅ Generate activation token
+    console.log("🛠 Creating activation token...");
     const activationToken = createActivationToken(user);
     const activationUrl = `https://multivender-kzk1.vercel.app/activation/${activationToken}`;
+    console.log("Activation URL:", activationUrl);
 
     try {
-      // ✅ Send activation email
+      console.log("📧 Sending activation email to:", user.email);
       await sendMail({
         email: user.email,
         subject: "Activate your account",
         message: `Hello ${user.name}, please click the link to activate your account: ${activationUrl}`,
       });
+      console.log("✅ Email sent successfully");
     } catch (err) {
+      console.error("❌ Email sending failed:", err);
       return next(new ErrorHandler("Email could not be sent", 500));
     }
 
@@ -62,9 +72,11 @@ router.post("/create-user", async (req, res, next) => {
       message: `Please check your email (${user.email}) to activate your account.`,
     });
   } catch (error) {
+    console.error("❌ Error in /create-user:", error);
     return next(new ErrorHandler(error.message, 500));
   }
 });
+
 
 // CREATE ACTIVATION TOKEN
 const createActivationToken = (user) => {
