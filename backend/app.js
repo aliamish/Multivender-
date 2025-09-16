@@ -4,7 +4,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const path = require('path')
+const path = require("path");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -13,8 +13,9 @@ app.use(
     origin: "https://multivender-8np2.vercel.app",
     credentials: true,
   })
-);  
-app.use("/", express.static(path.join(__dirname,"./uploads")));
+);
+app.use(fileUpload());
+app.use("/", express.static(path.join(__dirname, "./uploads")));
 // app.use("/",(req,resp)=>{
 //    resp.send("Hello world")
 // })
@@ -40,21 +41,16 @@ const conversation = require("./controller/conversation");
 const message = require("./controller/messages");
 const withdraw = require("./controller/withdraw");
 
-
-
 app.use("/api/v2/user", user);
 app.use("/api/v2/conversation", conversation);
 app.use("/api/v2/message", message);
 app.use("/api/v2/order", order);
 app.use("/api/v2/shop", shop);
-app.use('/api/v2/product',product)
-app.use('/api/v2/event',event)
-app.use('/api/v2/coupon',coupon)
+app.use("/api/v2/product", product);
+app.use("/api/v2/event", event);
+app.use("/api/v2/coupon", coupon);
 app.use("/api/v2/payment", payment);
 app.use("/api/v2/withdraw", withdraw);
-
-
-
 
 //  FOR ERROR HANDLING
 app.use(ErrorHandler);

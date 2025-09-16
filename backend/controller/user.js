@@ -53,8 +53,7 @@ router.post("/create-user", upload.single("file"), async (req, resp, next) => {
 
     const fileUpload = require("express-fileupload");
 
-app.use(fileUpload());
-
+  
 
     const fileUrl = path.join("uploads", req.file.filename);
     const user = {
