@@ -13,49 +13,43 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const sendMail = require("../utils/sendMail");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
-// CREATE A USER
-router.post("/create-user", upload.single("file"), async (req, resp, next) => {
+
+// Create User Route
+router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
     console.log("REQ.BODY:", req.body);
     console.log("REQ.FILE:", req.file);
-    const filename = req.file?.filename;
-    console.log("upload file", filename);
 
     const { name, email, password } = req.body;
     const userEmail = await User.findOne({ email });
 
     if (userEmail) {
-      const filename = req.file?.filename;
-
-      const myCloud = await cloudinary.v2.uploader.upload(avatar, {
-        folder: "avatars",
-      });
-
-      if (filename) {
-        const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
-          req.file.filename
-        }`;
-
+      // Agar user already hai, aur file upload hui hai → delete kar do
+      if (req.file?.path) {
         try {
-          // Try to delete the uploaded file
-          await fs.promises.unlink(filePath);
-          console.log(`✅ Deleted file: ${filename}`);
+          await fs.promises.unlink(req.file.path);
+          console.log(`✅ Deleted temp file: ${req.file.filename}`);
         } catch (err) {
-          console.error(`⚠️ Failed to delete file (${filename}):`, err.message);
-          // Optional: Don't block user creation just because of file deletion failure
+          console.warn("⚠️ Could not delete temp file:", err.message);
         }
-      } else {
-        console.warn("⚠️ No file found to delete.");
       }
-
       return next(new ErrorHandler("User already exists", 400));
     }
 
-    const fileUpload = require("express-fileupload");
+    // Upload to cloudinary
+    const myCloud = await cloudinary.uploader.upload(req.file.path, {
+      folder: "avatars",
+    });
 
-  
+    // Delete temp file from /tmp
+    try {
+      await fs.promises.unlink(req.file.path);
+      console.log(`✅ Deleted temp file: ${req.file.filename}`);
+    } catch (err) {
+      console.warn("⚠️ Could not delete temp file:", err.message);
+    }
 
-    const fileUrl = path.join("uploads", req.file.filename);
+    // Create new user object
     const user = {
       name,
       email,
@@ -66,16 +60,18 @@ router.post("/create-user", upload.single("file"), async (req, resp, next) => {
       },
     };
 
+    // Generate activation token
     const activationToken = createActivationToken(user);
     const activationUrl = `https://multivender-8np2.vercel.app/activation/${activationToken}`;
 
+    // Send activation mail
     await sendMail({
       email: user.email,
       subject: "Activate your account",
       message: `Hello ${user.name}, please click the link to activate your account: ${activationUrl}`,
     });
 
-    resp.status(201).json({
+    res.status(201).json({
       success: true,
       message: `Please check your email (${user.email}) to activate your account.`,
     });
