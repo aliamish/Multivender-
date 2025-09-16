@@ -1,41 +1,24 @@
+const express = require("express");
 const app = require("./app");
 const connectDB = require("./db/dataBase");
-const express = require("express");
-const path = require("path");
+const cloudinary = require("cloudinary");
 require("dotenv").config({ path: "backend/config/.env" });
 
-// Serve static uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
-
-// HANDLING UNCAUGHT EXCEPTIONS
-process.on("uncaughtException", (err) => {
-  console.log(`❌ Error: ${err.message}`);
-  console.log("Shutting down the server due to an uncaught exception...");
-  process.exit(1);
-});
-
-// connect db
-connectDatabase();
-coludinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-})
-
-
-// CONNECT DB
+// Connect Database
 connectDB();
 
-// CREATE SERVER
-const PORT = process.env.PORT || 8000;
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+// Cloudinary Config
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// UNHANDLED PROMISE REJECTION
-process.on("unhandledRejection", (err) => {
-  console.log(`❌ Shutting down the server due to: ${err.message}`);
-  server.close(() => {
-    process.exit(1);
-  });
+// Root route for Vercel check
+app.get("/", (req, res) => {
+  res.status(200).send("✅ Deployment Successful!");
 });
+
+// ❌ Don't use app.listen on Vercel
+// ✅ Just export the app
+module.exports = app;
