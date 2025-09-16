@@ -10,8 +10,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://multivender-8np2.vercel.app", // ✅ frontend domain
+    origin: "https://multivender-8np2.vercel.app",
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // ✅ add all methods
+    allowedHeaders: ["Content-Type", "Authorization"], // ✅ required headers
   })
 );
 
