@@ -26,7 +26,7 @@ const ShopCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!phoneNumber || isNaN(phoneNumber)) {
+    if (!phoneNum || isNaN(phoneNum)) {
       toast.error("Please enter a valid phone number");
       return;
     }
@@ -37,7 +37,7 @@ const ShopCreate = () => {
       formData.append("name", name);
       formData.append("email", email);
       formData.append("password", password);
-      formData.append("phoneNumber", phoneNumber);
+      formData.append("phoneNumber", phoneNum);
       formData.append("address", address);
       formData.append("zipCode", zipCode);
 
@@ -56,7 +56,7 @@ const ShopCreate = () => {
       setEmail("");
       setPassword("");
       setAvatar(null);
-      setPhoneNumber("");
+      setPhoneNum("");
       setAddress("");
       setZipCode("");
     } catch (err) {
