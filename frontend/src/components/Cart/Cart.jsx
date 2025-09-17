@@ -5,7 +5,7 @@ import { IoBagHandleOutline } from "react-icons/io5";
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, removeFromCart } from "../../redux/actions/cart";
+import { addTocart, removeFromCart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 
 const Cart = ({ setOpenCard }) => {
@@ -22,7 +22,7 @@ const Cart = ({ setOpenCard }) => {
   );
 
   const quantityChangeHandler = (data) => {
-    dispatch(addToCart(data));
+    dispatch(addTocart(data));
   };
 
   return (
