@@ -12,7 +12,7 @@ const { json } = require("stream/consumers");
 // Create event
 router.post(
   "/create-event",
-  catchAsyncErrors(async (req, res, next) => {
+  catchAsyncError(async (req, res, next) => {
     try {
       const { shopId, images, Start_Date, Finish_Date, ...rest } = req.body;
 
