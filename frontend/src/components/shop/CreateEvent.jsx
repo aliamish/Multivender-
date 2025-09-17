@@ -274,7 +274,7 @@ const CreateEvent = () => {
             {images &&
               images.map((i,index) => (
                 <img
-                  src={URL.createObjectURL(i)}
+                  src={i}
                   key={index}
                   alt=""
                   className="h-[120px] w-[120px] object-cover m-2"
