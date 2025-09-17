@@ -9,32 +9,48 @@ const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
 const fs = require("fs");
 const { json } = require("stream/consumers");
 
-// CREATE EVENT
+// Create event
 router.post(
   "/create-event",
-  upload.array("images"),
-  catchAsyncError(async (req, resp, next) => {
+  catchAsyncErrors(async (req, res, next) => {
     try {
-      const shopId = req.body.shopId;
+      const { shopId, images, Start_Date, Finish_Date, ...rest } = req.body;
+
+      // Validate shop
       const shop = await Shop.findById(shopId);
       if (!shop) {
-        return next(new ErrorHandler("Shop id is invalid", 400));
-      } else {
-        const files = req.files;
-        const imageUrls = files.map((file) => `${file.filename}`);
-
-        const eventData = req.body;
-        eventData.images = imageUrls;
-        eventData.shop = shop;
-
-        const product = await Event.create(eventData);
-        resp.status(201).json({
-          success: true,
-          product,
-        });
+        return next(new ErrorHandler("Shop Id is invalid!", 400));
       }
+
+      if (!images || images.length === 0) {
+        return next(
+          new ErrorHandler("Please provide at least one image!", 400)
+        );
+      }
+
+      if (!Start_Date || !Finish_Date) {
+        return next(
+          new ErrorHandler("Start_Date and Finish_Date are required!", 400)
+        );
+      }
+
+      const eventData = {
+        ...rest,
+        images, // ✅ array of strings from frontend Cloudinary URLs
+        shop,
+        shopId,
+        Start_Date, // match your schema
+        Finish_Date, // match your schema
+      };
+
+      const event = await Event.create(eventData);
+
+      res.status(201).json({
+        success: true,
+        event,
+      });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );
