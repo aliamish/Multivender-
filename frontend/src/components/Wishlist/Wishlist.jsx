@@ -5,7 +5,7 @@ import { BsCartPlus } from "react-icons/bs";
 import { AiOutlineHeart } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromWishlist } from "../../redux/actions/Wishlist";
-import { addToCart } from "../../redux/actions/cart";
+import { addTocart } from "../../redux/actions/cart";
 
 const Wish = ({ setOpenWishlist }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -17,7 +17,7 @@ const Wish = ({ setOpenWishlist }) => {
 
   const addToCartHandler = (data) => {
     const newData = { ...data, qty: 1 };
-    dispatch(addToCart(newData));
+    dispatch(addTocart(newData));
     setOpenWishlist(false);
   };
   console.log(setOpenWishlist);
