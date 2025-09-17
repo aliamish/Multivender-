@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
 import Loader from "../layout/loader";
 import { DataGrid } from "@mui/x-data-grid";
 import { deleteEvent } from "../../redux/actions/event";
+import axios from "axios";
+import { server } from "../../server";
 
 const AllEvents = () => {
-  const { seller } = useSelector((state) => state.seller);
-
+  const { isLoding } = useSelector((state) => state.events);
+  const dispatch = useDispatch();
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
