@@ -8,7 +8,7 @@ import { deleteEvent, getAllEventsShop } from "../../redux/actions/event";
 
 
 const AllEvents = () => {
-  const { events, isLoding } = useSelector((state) => state.events);
+  const { allEvents, isLoding } = useSelector((state) => state.events);
   const { seller } = useSelector((state) => state.seller);
 
   
@@ -95,7 +95,7 @@ const AllEvents = () => {
 
     const row = [];
 
-    events && events.forEach((item) => {
+    allEvents && allEvents.forEach((item) => {
       row.push({
         id: item._id,
         name: item.name,

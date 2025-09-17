@@ -14,18 +14,18 @@ const eventSchema = new mongoose.Schema({
     required: [true, "Please Enter your event product category!"],
   },
   start_Date: {
-        type: Date,
-        required: true,
+    type: Date,
+    required: true,
   },
   Finish_Date: {
-        type: Date,
-        required: true,
+    type: Date,
+    required: true,
   },
-status: {
-  type: String,
-  enum: ["Running", "Completed", "Pending"], // optional, only allowed values
-  default: "Running",  // 👈 yeh hona chahiye
-},
+  status: {
+    type: String,
+    enum: ["Running", "Completed", "Pending"], // optional, only allowed values
+    default: "Running", // 👈 yeh hona chahiye
+  },
 
   tags: {
     type: String,

@@ -68,7 +68,7 @@ router.get("/get-all-events", async (req, res, next) => {
   }
 });
 
-// GET ALL PRODUCTS FOR ALL PRODUCTS
+// GET ALL PRODUCTS FOR ALL shop
 router.get(
   "/get-all-events/:id",
   catchAsyncError(async (req, resp, next) => {

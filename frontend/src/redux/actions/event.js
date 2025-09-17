@@ -71,7 +71,7 @@ export const getAllEventsShop = (id) => async (dispatch) => {
   }
 };
 
-export const getAllEvents = (id) => async (dispatch) => {
+export const getAllEvents = () => async (dispatch) => {
   try {
     dispatch({
       type: "getAllEventsRequest",
@@ -80,7 +80,7 @@ export const getAllEvents = (id) => async (dispatch) => {
     const { data } = await axios.get(`${server}/event/get-all-events`);
     dispatch({
       type: "getAllEventsSuccess",
-      payload: data.events,
+      payload: data.allEvents,
     });
   } catch (error) {
     dispatch({
