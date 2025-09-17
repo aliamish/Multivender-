@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllEvents } from  '../redux/actions/event'
 
 const EventPage = () => {
-  const { allEvents, isLoading } = useSelector((state) => state.event);
+  const { allEvents, isLoading } = useSelector((state) => state.events);
   const dispatch = useDispatch();
 
   useEffect(() => {
