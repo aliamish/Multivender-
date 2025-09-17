@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import {
   addToWishlist,
   removeFromWishlist,
-} from "../../redux/actions/Wishlist";
+} from "../redux/actions/Wishlist";
 import { addTocart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 import axios from "axios";
