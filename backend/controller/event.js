@@ -14,7 +14,7 @@ router.post(
   "/create-event",
   catchAsyncError(async (req, res, next) => {
     try {
-      const { shopId, images, Start_Date, Finish_Date, ...rest } = req.body;
+      const { shopId, images, start_Date, Finish_Date, ...rest } = req.body;
 
       // Validate shop
       const shop = await Shop.findById(shopId);
@@ -28,7 +28,7 @@ router.post(
         );
       }
 
-      if (!Start_Date || !Finish_Date) {
+      if (!start_Date || !Finish_Date) {
         return next(
           new ErrorHandler("Start_Date and Finish_Date are required!", 400)
         );
@@ -39,7 +39,7 @@ router.post(
         images, // ✅ array of strings from frontend Cloudinary URLs
         shop,
         shopId,
-        Start_Date, // match your schema
+        start_Date, // match your schema
         Finish_Date, // match your schema
       };
 
