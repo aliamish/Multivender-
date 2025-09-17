@@ -13,7 +13,7 @@ const DashboardHeader = () => {
   const avatarUrl = seller?.avatar?.url;
   const fullAvatarUrl =
     avatarUrl && !avatarUrl.startsWith("http")
-      ? `${backend_url}${avatarUrl.startsWith("/") ? "" : "/"}${avatarUrl}`
+      ? `${avatarUrl.startsWith("/") ? "" : "/"}${avatarUrl}`
       : avatarUrl || Avatar;
   return (
     <div className="w-full h-20 bg-white shadow sticky top-0 left-0 z-30 flex items-center justify-between px-4">

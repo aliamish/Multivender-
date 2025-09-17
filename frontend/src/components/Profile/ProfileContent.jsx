@@ -29,7 +29,7 @@ const ProfileContent = ({ active }) => {
   const avatarUrl = user?.avatar?.url;
   const fullAvatarUrl =
     avatarUrl && !avatarUrl.startsWith("http")
-      ? `${backend_url}${avatarUrl.startsWith("/") ? "" : "/"}${avatarUrl}`
+      ? `${avatarUrl.startsWith("/") ? "" : "/"}${avatarUrl}`
       : avatarUrl || Avatar;
   const [name, setName] = useState(user && user.name);
   const [email, setEmail] = useState(user && user.email);

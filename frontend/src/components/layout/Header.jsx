@@ -33,7 +33,7 @@ const Header = ({ activeHeading }) => {
 
   const fullAvatarUrl =
     avatarUrl && !avatarUrl.startsWith("http")
-      ? `${backend_url}${avatarUrl.startsWith("/") ? "" : "/"}${avatarUrl}`
+      ? `${avatarUrl.startsWith("/") ? "" : "/"}${avatarUrl}`
       : avatarUrl || Avatar;
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);

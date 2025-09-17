@@ -105,7 +105,7 @@ const CartSingle = ({ data, removeFromWishlistHandler, addToCartHandler }) => {
         <img
                   src={
                     data?.images?.[0]
-                      ? `${backend_url}/${data.images[0].replace(/\\/g, "/")}`
+                      ? `/${data.images[0].replace(/\\/g, "/")}`
                       : "https://via.placeholder.com/150"
                   }
                   alt={data?.name}

@@ -96,7 +96,7 @@ const UserOrderDetails = () => {
       {data?.cart?.map((item, index) => (
         <div key={index} className="w-full flex items-start mb-5">
           <img
-            src={`${backend_url}/${item.images?.[0]}`}
+            src={`/${item.images?.[0]}`}
             alt=""
             className="w-[80px] h-[80px]"
           />
@@ -138,7 +138,7 @@ const UserOrderDetails = () => {
             <br />
             <div className="w-full flex">
               <img
-                src={`${backend_url}/${selectedItem?.images?.[0]}`}
+                src={`/${selectedItem?.images?.[0]}`}
                 alt=""
                 className="w-[20vh] h-[20vh]"
               />

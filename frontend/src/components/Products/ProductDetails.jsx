@@ -224,7 +224,7 @@ const ProductDetails = ({ data }) => {
                 <div className="flex items-center pt-8 ">
                   <Link to={`/shop/preview/${data?.shop._id}`}>
                     <img
-                      src={`${backend_url}${data?.shop?.avatar}`}
+                      src={`${data?.shop?.avatar}`}
                       alt=""
                       className="w-[50px] h-[50px] rounded-full mr-2"
                     />
@@ -333,7 +333,7 @@ const ProductDetailsInfo = ({
                     src={
                       item.user.avatar.startsWith("http")
                         ? item.user.avatar
-                        : `${backend_url}${item.user.avatar}`
+                        : `${item.user.avatar}`
                     }
                     alt="profile"
                     className="w-[60px] h-[60px] rounded-full object-cover"
@@ -361,7 +361,7 @@ const ProductDetailsInfo = ({
             <Link to={`/shop/preview/${data.shop._id}`}>
               <div className="flex items-center">
                 <img
-                  src={`${backend_url}${data?.shop?.avatar}`}
+                  src={`${data?.shop?.avatar}`}
                   className="w-[50px] h-[50px] rounded-full"
                   alt=""
                 />

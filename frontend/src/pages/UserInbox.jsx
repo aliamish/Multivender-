@@ -303,7 +303,7 @@ const MessageList = ({
     >
       <div className="relative">
         <img
-          src={`${backend_url}/${chatUser?.avatar.url}`}
+          src={`/${chatUser?.avatar.url}`}
           alt=""
           className="w-[60px] h-[60px] rounded-full"
         />
@@ -343,7 +343,7 @@ const UserChatBox = ({
       <div className="w-full flex p-3 items-center justify-between bg-slate-200">
         <div className="flex">
           <img
-            src={`${backend_url}/${userData?.avatar.url}`}
+            src={`/${userData?.avatar.url}`}
             alt=""
             className="w-[60px] h-[60px] rounded-full"
           />
@@ -371,7 +371,7 @@ const UserChatBox = ({
                     <div className="w-max p-2 rounded bg-[#38c776] text-white h-min">
                       {item.images ? (
                         <img
-                          src={`${backend_url}/${item.images}`}
+                          src={`/${item.images}`}
                           alt="sent"
                           className="w-[200px] h-auto rounded"
                         />
@@ -388,14 +388,14 @@ const UserChatBox = ({
                 /* ✅ Received Message → LEFT SIDE */
                 <div className="flex w-full my-2">
                   <img
-                    src={`${backend_url}/${userData?.avatar.url}`}
+                    src={`/${userData?.avatar.url}`}
                     className="w-[40px] h-[40px] rounded-full mr-3"
                     alt=""
                   />
                   <div className="w-max p-2 rounded bg-gray-300 text-black h-min">
                     {item.images ? (
                       <img
-                        src={`${backend_url}/${item.images}`}
+                        src={`/${item.images}`}
                         alt="received"
                         className="w-[200px] h-auto rounded"
                       />

@@ -15,7 +15,7 @@ const AdminHeader = () => {
        const avatarUrl = user?.avatar?.url;
         const fullAvatarUrl =
           avatarUrl && !avatarUrl.startsWith("http")
-            ? `${backend_url}${avatarUrl.startsWith("/") ? "" : "/"}${avatarUrl}`
+            ? `${avatarUrl.startsWith("/") ? "" : "/"}${avatarUrl}`
             : avatarUrl || avatarUrl;
 
   return (

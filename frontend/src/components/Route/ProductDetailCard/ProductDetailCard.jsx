@@ -19,7 +19,7 @@ const ProductDetailCard = ({ setOpen, data }) => {
   const dispatch = useDispatch();
   // image URL build
 const imageUrl = data?.images?.[0]
-  ? `${backend_url}/${data.images[0].replace(/\\/g, "/")}`
+  ? `/${data.images[0].replace(/\\/g, "/")}`
   : "https://via.placeholder.com/300";
 
 
@@ -101,7 +101,7 @@ console.log(data.shop?.avatar); // shop avatar object
                   <img
                     src={
                       data?.shop?.avatar?.url
-                        ? `${backend_url}/${data.shop.avatar.url.replace(
+                        ? `/${data.shop.avatar.url.replace(
                             /\\/g,
                             "/"
                           )}` // windows path fix
