@@ -1,30 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
 import Loader from "../layout/loader";
-import { DataGrid } from "@mui/x-data-grid";
-import { deleteEvent } from "../../redux/actions/event";
-import axios from "axios";
-import { server } from "../../server";
+import {DataGrid} from "@mui/x-data-grid";
+import { deleteEvent, getAllEventsShop } from "../../redux/actions/event";
+
 
 const AllEvents = () => {
-  const { isLoding } = useSelector((state) => state.events);
+  const { events, isLoding } = useSelector((state) => state.events);
+  const { seller } = useSelector((state) => state.seller);
+
+  
+
   const dispatch = useDispatch();
-  const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${server}/event/admin-all-events`, { withCredentials: true })
-      .then((res) => {
-        setEvents(res.data.events);
-      });
-  }, []);
+    dispatch(getAllEventsShop(seller._id));
+  }, [dispatch]);
 
   const handleDelete = (id) => {
     dispatch(deleteEvent(id));
     window.location.reload();
-  };
+  }
 
   const columns = [
     { field: "id", headerName: "Event Id", minWidth: 150, flex: 0.7 },
@@ -84,7 +82,9 @@ const AllEvents = () => {
       renderCell: (params) => {
         return (
           <>
-            <button onClick={() => handleDelete(params.id)}>
+            <button
+            onClick={() => handleDelete(params.id)}
+            >
               <AiOutlineDelete size={20} />
             </button>
           </>
@@ -93,10 +93,9 @@ const AllEvents = () => {
     },
   ];
 
-  const row = [];
+    const row = [];
 
-  events &&
-    events.forEach((item) => {
+    events && events.forEach((item) => {
       row.push({
         id: item._id,
         name: item.name,
@@ -105,23 +104,28 @@ const AllEvents = () => {
         sold: 10,
       });
     });
-  return (
+  return(
     <>
-      {isLoding ? (
-        <Loader />
-      ) : (
-        <div className="w-full mx-8 pt-1 mt-10 bg-white">
-          <DataGrid
-            rows={row}
-            columns={columns}
-            pageSize={10}
-            disableSelectionOnClick
-            autoHeight
-          />
-        </div>
-      )}
+       {
+        isLoding ? (
+          <Loader />
+        ) : (
+            <div className="w-full mx-8 pt-1 mt-10 bg-white">
+                 <DataGrid
+                    rows={row}
+                    columns={columns}
+                    pageSize={10}
+                    disableSelectionOnClick
+                    autoHeight
+                 />
+            </div>
+        )
+       }
+    
     </>
-  );
+  )
+  
+  
 };
 
 export default AllEvents;
