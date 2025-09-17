@@ -78,7 +78,7 @@ const CreateEvent = () => {
     discountPrice,
     stock,
     shopId: seller._id,
-    Start_Date: startDate.toISOString(),   // ✅ match backend schema
+    start_Date: startDate.toISOString(),   // ✅ match backend schema
     Finish_Date: endDate.toISOString(),    // ✅ match backend schema
     images, // array of strings
   };
