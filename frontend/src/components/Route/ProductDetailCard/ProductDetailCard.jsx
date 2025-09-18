@@ -19,8 +19,6 @@ const ProductDetailCard = ({ setOpen, data }) => {
   const dispatch = useDispatch();
   // image URL build
 const imageUrl = data?.images?.[0]
-  ? `/${data.images[0].replace(/\\/g, "/")}`
-  : "https://via.placeholder.com/300";
 
 
   console.log(data.images); // sari images array
@@ -101,11 +99,6 @@ console.log(data.shop?.avatar); // shop avatar object
                   <img
                     src={
                       data?.shop?.avatar?.url
-                        ? `/${data.shop.avatar.url.replace(
-                            /\\/g,
-                            "/"
-                          )}` // windows path fix
-                        : "https://via.placeholder.com/50"
                     }
                     alt={data?.shop?.name || "Shop"}
                     className="w-[50px] h-[50px] rounded-full mr-2 object-cover"
