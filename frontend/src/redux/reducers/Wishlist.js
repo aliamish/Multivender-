@@ -20,11 +20,11 @@ export const wishlistReducer = createReducer(initialState, (builder) => {
         state.wishlist.push(item);
       }
 
-      // ✅ save to localStorage every time cart updates
-      localStorage.setItem("cartItems", JSON.stringify(state.cart));
+      // ✅ save to localStorage every time wishlist updates
+      localStorage.setItem("wishlistItems", JSON.stringify(state.wishlist));
     })
 
-    .addCase("removeFromCart", (state, action) => {
+    .addCase("removeFromWishlist", (state, action) => {
       state.wishlist = state.wishlist.filter((i) => i._id !== action.payload);
 
       // ✅ update localStorage after removing
