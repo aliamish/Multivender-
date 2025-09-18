@@ -1,5 +1,10 @@
 import { createReducer } from "@reduxjs/toolkit";
 
+// Helper to sync with localStorage
+const saveToLocalStorage = (wishlist) => {
+  localStorage.setItem("wishlistItems", JSON.stringify(wishlist));
+};
+
 const initialState = {
   wishlist: localStorage.getItem("wishlistItems")
     ? JSON.parse(localStorage.getItem("wishlistItems"))
@@ -20,14 +25,16 @@ export const wishlistReducer = createReducer(initialState, (builder) => {
         state.wishlist.push(item);
       }
 
-      // ✅ save to localStorage every time wishlist updates
-      localStorage.setItem("wishlistItems", JSON.stringify(state.wishlist));
+      saveToLocalStorage(state.wishlist);
     })
 
     .addCase("removeFromWishlist", (state, action) => {
       state.wishlist = state.wishlist.filter((i) => i._id !== action.payload);
+      saveToLocalStorage(state.wishlist);
+    })
 
-      // ✅ update localStorage after removing
-      localStorage.setItem("wishlistItems", JSON.stringify(state.wishlist));
+    .addCase("clearWishlist", (state) => {
+      state.wishlist = [];
+      saveToLocalStorage(state.wishlist);
     });
 });
